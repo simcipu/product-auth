@@ -2,10 +2,14 @@
 
 # INSERIMENTO USER DA SERVICE REST INSERISCI
 {
-"userId": "simone",
-"password": "pass1!",
+"adminUser":"user",
+"adminPassword":"password",
+"utente": {
+"userId": "simone9",
+"password": "pass3",
 "attivo": "Si",
 "ruoli": [
 "ADMIN"
 ]
+}
 }

@@ -9,4 +9,8 @@ public class AuthenticationException extends RuntimeException
 	{
 		super(message, cause);
 	}
+
+	public AuthenticationException(String message) {
+		super(message);
+	}
 }

@@ -40,6 +40,12 @@ public class JwtAuthenticationRestController
 	@Value("${sicurezza.header}")
 	private String tokenHeader;
 
+	@Value("${product.username}")
+	private String user;
+
+	@Value("${product.password}")
+	private String password;
+
 	@Autowired
 	private UtentiService utentiService;
 
@@ -130,7 +136,7 @@ public class JwtAuthenticationRestController
 		}
 	}
 	@PostMapping(value = "${sicurezza.uri}/inserisci")
-	public ResponseEntity<?> addNewUser(@Valid @RequestBody Utenti utente,
+	public ResponseEntity<?> addNewUser(@Valid @RequestBody UserRequest userRequest,
 										BindingResult bindingResult) throws BindingException, DuplicateException {
 
 		if (bindingResult.hasErrors())
@@ -140,19 +146,23 @@ public class JwtAuthenticationRestController
 			throw new BindingException(MsgErr);
 		}
 
-		String encodedPassword = passwordEncoder.encode(utente.getPassword());
-		utente.setPassword(encodedPassword);
-		utentiService.Save(utente);
+		if(!(userRequest.getAdminPassword().equals(password) && userRequest.getAdminUser().equals(user))){
+			throw new AuthenticationException("UTENTE NON ABILITATO");
+		}
 
-		HttpHeaders headers = new HttpHeaders();
-		ObjectMapper mapper = new ObjectMapper();
+			String encodedPassword = passwordEncoder.encode(userRequest.getUtente().getPassword());
+			userRequest.getUtente().setPassword(encodedPassword);
+			utentiService.Save(userRequest.getUtente());
 
-		headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpHeaders headers = new HttpHeaders();
+			ObjectMapper mapper = new ObjectMapper();
 
-		ObjectNode responseNode = mapper.createObjectNode();
+			headers.setContentType(MediaType.APPLICATION_JSON);
 
-		responseNode.put("code", HttpStatus.OK.toString());
-		responseNode.put("message", "Inserimento Utente " + utente.getUserId() + " Eseguita Con Successo");
+			ObjectNode responseNode = mapper.createObjectNode();
+
+			responseNode.put("code", HttpStatus.OK.toString());
+			responseNode.put("message", "Inserimento Utente " + userRequest.getUtente().getUserId() + " Eseguita Con Successo");
 
 		return new ResponseEntity<>(responseNode, headers, HttpStatus.CREATED);
 	}
