@@ -164,10 +164,11 @@ public class JwtAuthenticationRestController
 		return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
 	}
 
-	@PostMapping(value = "${sicurezza.uri}/update")
-	public ResponseEntity<?> updateUser(@Valid @RequestBody Utenti utenti) {
+	@PostMapping(value = "${sicurezza.uri}/update/{change}")
+	public ResponseEntity<?> updateUser(@Valid @RequestBody Utenti utenti,@PathVariable("change") Boolean change) {
 
-	  utentiService.update(utenti);
+
+	    utentiService.update(utenti);
 
 		HttpHeaders headers = new HttpHeaders();
 		ObjectMapper mapper = new ObjectMapper();
