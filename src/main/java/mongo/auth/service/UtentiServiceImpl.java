@@ -27,13 +27,19 @@ public class UtentiServiceImpl implements UtentiService
 
 
 	@Override
-	public void Save(Utenti utente) throws DuplicateException {
+	public void save(Utenti utente) throws DuplicateException {
 		if(utentiRepository.findByUserId(utente.getUserId()).isPresent()){
 			throw  new DuplicateException("userId già esistente");
 		}else {
 			utentiRepository.save(utente);
 		}
 	}
+
+	@Override
+	public void update(Utenti utente) {
+		utentiRepository.save(utente);
+	}
+
 	@Override
 	public Utenti getUtente(String userId){
 

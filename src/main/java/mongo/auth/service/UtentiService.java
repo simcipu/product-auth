@@ -9,8 +9,10 @@ public interface UtentiService
 {
 	public List<Utenti> SelTutti();
 
-	public void Save(Utenti utente) throws DuplicateException;
-	
+	public void save(Utenti utente) throws DuplicateException;
+
+	public void update(Utenti utente);
+
 	public void Delete(Utenti utente);
 
 	public Utenti getUtente(String userId);

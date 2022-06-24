@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -98,6 +99,15 @@ public class JwtAuthenticationRestController
 		return retVal;
 	}
 
+	@GetMapping(value = "${sicurezza.uri}/utenti")
+	public List<Utenti> getUtenti()
+	{
+
+		List<Utenti> utentiList = utentiService.SelTutti();
+
+		return utentiList;
+	}
+
 
 	@GetMapping(value = "${sicurezza.uri}/validate/{username}/{token}")
 	public Boolean validateToken(@PathVariable("username") String username,@PathVariable("token") String token) throws Exception {
@@ -135,6 +145,25 @@ public class JwtAuthenticationRestController
 			return ResponseEntity.badRequest().body(null);
 		}
 	}
+
+	@PostMapping(value = "${sicurezza.uri}/update")
+	public ResponseEntity<?> updateUser(@Valid @RequestBody Utenti utenti) throws DuplicateException {
+
+	  utentiService.update(utenti);
+
+		HttpHeaders headers = new HttpHeaders();
+		ObjectMapper mapper = new ObjectMapper();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ObjectNode responseNode = mapper.createObjectNode();
+
+		responseNode.put("code", HttpStatus.OK.toString());
+		responseNode.put("message", "update Utente " + utenti.getPassword()+ " Eseguita Con Successo");
+
+		return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
+	}
+
 	@PostMapping(value = "${sicurezza.uri}/inserisci")
 	public ResponseEntity<?> addNewUser(@Valid @RequestBody UserRequest userRequest,
 										BindingResult bindingResult) throws BindingException, DuplicateException {
@@ -152,7 +181,7 @@ public class JwtAuthenticationRestController
 
 			String encodedPassword = passwordEncoder.encode(userRequest.getUtente().getPassword());
 			userRequest.getUtente().setPassword(encodedPassword);
-			utentiService.Save(userRequest.getUtente());
+			utentiService.save(userRequest.getUtente());
 
 			HttpHeaders headers = new HttpHeaders();
 			ObjectMapper mapper = new ObjectMapper();
