@@ -146,10 +146,11 @@ public class JwtAuthenticationRestController
 		}
 	}
 
-	@DeleteMapping(value = "${sicurezza.uri}/delete")
-	public ResponseEntity<?> deleteUser(@Valid @RequestBody Utenti utenti) {
+	@DeleteMapping(value = "${sicurezza.uri}/delete/{userId}")
+	public ResponseEntity<?> deleteUser(@PathVariable("userId") String userId) {
 
-		utentiService.Delete(utenti);
+		Utenti ut=utentiService.getUtente(userId);
+		utentiService.Delete(ut);
 
 		HttpHeaders headers = new HttpHeaders();
 		ObjectMapper mapper = new ObjectMapper();
@@ -159,7 +160,7 @@ public class JwtAuthenticationRestController
 		ObjectNode responseNode = mapper.createObjectNode();
 
 		responseNode.put("code", HttpStatus.OK.toString());
-		responseNode.put("message", "delete Utente " + utenti.getUserId()+ " Eseguita Con Successo");
+		responseNode.put("message", "delete Utente " + ut.getUserId()+ " Eseguita Con Successo");
 
 		return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
 	}
